@@ -1,0 +1,3 @@
+app_pkgid=cmd_module
+app_displayname=UBS Deploy Puppet Module for Windows
+app_version=1.0.0
