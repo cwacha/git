@@ -8,13 +8,14 @@ $BASEDIR=$PSScriptRoot
 function all {
     clean
     import
-    pkg
+    #pkg
+    nupkg
 }
 
 function _init {
     $global:app_pkgid = "git"
     $global:app_displayname = "Git for Windows Portable"
-    $global:app_version = Get-ChildItem $BASEDIR\..\ext\*.exe | %{$_.Name -replace "PortableGit-", "" -replace "-32-.*", "" }
+    $global:app_version = Get-ChildItem $BASEDIR\..\ext\*.exe | %{$_.Name -replace "PortableGit-", "" -replace "-64-.*", "" }
     $global:app_revision = (git log --pretty=oneline).count
     $global:app_build = git rev-parse --short HEAD
 
@@ -51,6 +52,23 @@ function pkg {
     Compress-Archive -Path root\* -DestinationPath ..\PKG\$app_pkgname.zip
     cd ..
     "## created $BASEDIR\PKG\$app_pkgname.zip"
+}
+
+function nupkg {
+    if (!(Get-Command "choco.exe" -ea SilentlyContinue)) {
+        return
+    }
+    "# packaging nupkg ..."
+    mkdir PKG *> $null
+
+    #rm -r -fo -ea SilentlyContinue BUILD\root
+    cp -r -fo nupkg PKG
+    cp -r -fo BUILD\* PKG\nupkg\tools
+    _template nupkg\package.nuspec > PKG\nupkg\$app_pkgid.nuspec
+    rm PKG\nupkg\package.nuspec
+    cd PKG\nupkg
+    choco pack -outputdirectory $BASEDIR\PKG
+    cd $BASEDIR
 }
 
 function clean {
