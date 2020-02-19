@@ -16,7 +16,7 @@ function _init {
     $global:app_pkgid = "git"
     $global:app_displayname = "Git for Windows Portable"
     $global:app_version = Get-ChildItem $BASEDIR\..\ext\*.exe | %{$_.Name -replace "PortableGit-", "" -replace "-64-.*", "" }
-    $global:app_revision = (git describe --tags --abbrev=0 | %{git log "$_..HEAD" --oneline}).count
+    $global:app_revision = (git log --pretty=oneline).count
     $global:app_build = git rev-parse --short HEAD
 
     $global:app_pkgname = "$app_pkgid-$app_version-$app_revision-$app_build"
