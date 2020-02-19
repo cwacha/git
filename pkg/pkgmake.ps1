@@ -6,6 +6,7 @@ $BASEDIR=$PSScriptRoot
 #echo BASEDIR=$BASEDIR
 
 function all {
+    "# building: $app_pkgname"
     clean
     import
     #pkg
