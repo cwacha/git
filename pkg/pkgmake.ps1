@@ -25,8 +25,7 @@ function _init {
 
 function _template {
     param (
-        [string] $inputfile,
-        [string] $outputfile
+        [string] $inputfile
     )
     Get-Content $inputfile | %{ $_ `
         -replace "%app_pkgid%", "$app_pkgid" `
@@ -36,7 +35,6 @@ function _template {
         -replace "%app_build%", "$app_build"
     }
 }
-
 
 function import {
     "# import ..."
@@ -65,7 +63,7 @@ function nupkg {
     #rm -r -fo -ea SilentlyContinue BUILD\root
     cp -r -fo nupkg PKG
     cp -r -fo BUILD\* PKG\nupkg\tools
-    _template nupkg\package.nuspec > PKG\nupkg\$app_pkgid.nuspec
+    _template nupkg\package.nuspec | Out-File -Encoding "UTF8" PKG\nupkg\$app_pkgid.nuspec
     rm PKG\nupkg\package.nuspec
     cd PKG\nupkg
     choco pack -outputdirectory $BASEDIR\PKG
