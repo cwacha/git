@@ -1,0 +1,27 @@
+[core]
+    symlinks = false
+    autocrlf = false
+    fscache = true
+    editor = nano
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+	interactive = true
+[help]
+    format = html
+[http]
+	sslCAinfo = /ssl/certs/ca-bundle.crt
+    sslBackend = schannel
+[diff "astextplain"]
+    textconv = astextplain
+[rebase]
+    autosquash = true
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+	smudge = git-lfs smudge --skip -- %f
+	process = git-lfs filter-process --skip
+    required = true
+[credential]
+[pull]
+    rebase = false
