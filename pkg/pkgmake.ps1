@@ -11,6 +11,7 @@ function all {
     import
     #pkg
     nupkg
+    checksums
 }
 
 function _init {
@@ -79,6 +80,14 @@ function nupkg {
     cd PKG\nupkg
     choco pack -outputdirectory $BASEDIR\PKG
     cd $BASEDIR
+}
+
+function checksums {
+    "# checksums ..."
+    cd PKG
+    Get-FileHash *.zip, *.nupkg, *.msi | Select-Object Hash, @{l = "File"; e = { split-path $_.Path -leaf } } | % { "$($_.Hash) $($_.File)" } | Out-File -Encoding "UTF8" $app_pkgname-checksums-sha256.txt
+    Get-Content $app_pkgname-checksums-sha256.txt
+    cd ..
 }
 
 function clean {
