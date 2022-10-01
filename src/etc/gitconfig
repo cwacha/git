@@ -1,6 +1,6 @@
 [core]
     symlinks = false
-    autocrlf = false
+    autocrlf = true
     fscache = true
     editor = nano
 [color]
