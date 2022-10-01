@@ -9,7 +9,7 @@ function all {
     "# building: $app_pkgname"
     clean
     import
-    #pkg
+    #zip
     nupkg
     checksums
 }
@@ -32,8 +32,8 @@ function _template {
     )
     Get-Content $inputfile | % { $_ `
             -replace "%app_pkgid%", "$app_pkgid" `
-            -replace "%app_version%", "$app_version" `
             -replace "%app_displayname%", "$app_displayname" `
+            -replace "%app_version%", "$app_version" `
             -replace "%app_revision%", "$app_revision" `
             -replace "%app_build%", "$app_build"
     }
@@ -41,7 +41,7 @@ function _template {
 
 function import {
     "# import ..."
-    mkdir BUILD/root -ea SilentlyContinue *> $null
+    mkdir -fo BUILD/root *> $null
 
     & $BASEDIR\..\ext\PortableGit*.exe -o BUILD/root -y | Out-Null
     cp -r -fo ..\src\* BUILD/root
@@ -54,9 +54,9 @@ function import {
     rm BUILD\root\usr\bin\vim.exe.ignore
 }
 
-function pkg {
-    "# packaging ..."
-    mkdir PKG *> $null
+function zip {
+    "# packaging ZIP ..."
+    mkdir -fo PKG/zip *> $null
     
     cd BUILD
     Compress-Archive -Path root\* -DestinationPath ..\PKG\$app_pkgname.zip
@@ -66,12 +66,12 @@ function pkg {
 
 function nupkg {
     if (!(Get-Command "choco.exe" -ea SilentlyContinue)) {
+        "## WARNING: cannot build chocolatey package, choco-client missing"
         return
     }
     "# packaging nupkg ..."
-    mkdir PKG *> $null
+    mkdir -fo PKG *> $null
 
-    #rm -r -fo -ea SilentlyContinue BUILD\root
     cp -r -fo nupkg PKG
     mkdir PKG\nupkg\tools *> $null
     cp -r -fo BUILD\* PKG\nupkg\tools
@@ -84,6 +84,7 @@ function nupkg {
 
 function checksums {
     "# checksums ..."
+    mkdir -fo PKG *> $null
     cd PKG
     Get-FileHash *.zip, *.nupkg, *.msi | Select-Object Hash, @{l = "File"; e = { split-path $_.Path -leaf } } | % { "$($_.Hash) $($_.File)" } | Out-File -Encoding "UTF8" $app_pkgname-checksums-sha256.txt
     Get-Content $app_pkgname-checksums-sha256.txt
